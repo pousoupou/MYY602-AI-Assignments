@@ -149,7 +149,7 @@ public class GameLogic {
                     win = "";
                     continue;
                 }
-                win += grid[j][2-j+i];
+                win += grid[j][j+i];
                 if(win.equals("XOX")){
                     return 2;
                 }
@@ -193,7 +193,7 @@ public class GameLogic {
     public int minimax(char[][] grid, boolean isMax){
         int score = evaluate(grid);
 
-        if(score != -1){
+        if(score == 2){
             return score;
         }
         
@@ -235,8 +235,6 @@ public class GameLogic {
         for(int i = 0; i < 3; i++){
             for(int j = 0; j < 4; j++){
                 if(grid[i][j] == ' '){
-                    this.row = i;
-                    this.col = j;
                     grid[i][j] = 'X';
                     int moveValue = minimax(grid, false);
                     grid[i][j] = ' ';
