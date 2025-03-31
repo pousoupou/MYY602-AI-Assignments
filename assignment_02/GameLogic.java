@@ -2,12 +2,12 @@ package assignment_02;
 
 import java.util.Arrays;
 
-public class Grid {
-    private char grid[][];
+public class GameLogic {
+    private char[][] grid;
     private int row;
     private int col;
 
-    public Grid(){
+    public GameLogic(){
         grid = new char[4][3];
         Arrays.fill(grid, ' ');
     }
@@ -16,14 +16,7 @@ public class Grid {
         return grid;
     }
 
-    public void place(char c, int row, int col){
-        grid[row][col] = c;
-
-        this.row = row;
-        this.col = col;
-    }
-
-    public boolean wins(){
+    public int evaluate(char[][] grid){
         String win = "";
 
         /**
@@ -36,8 +29,11 @@ public class Grid {
             }
             win += grid[this.col + i][this.row];
         }
-        if(win.equals("XOX") || win.equals("OXO")){
-            return true;
+        if(win.equals("XOX")){
+            return 2;
+        }
+        if(win.equals("OXO")){
+            return -2;
         }
 
         /**
@@ -50,8 +46,11 @@ public class Grid {
             }
             win += grid[this.col - i][this.row];
         }
-        if(win.equals("XOX") || win.equals("OXO")){
-            return true;
+        if(win.equals("XOX")){
+            return 2;
+        }
+        if(win.equals("OXO")){
+            return -2;
         }
 
         /**
@@ -64,8 +63,11 @@ public class Grid {
             }
             win += grid[this.col][this.row + i];
         }
-        if(win.equals("XOX") || win.equals("OXO")){
-            return true;
+        if(win.equals("XOX")){
+            return 2;
+        }
+        if(win.equals("OXO")){
+            return -2;
         }
 
         /**
@@ -78,8 +80,11 @@ public class Grid {
             }
             win += grid[this.col][this.row - i];
         }
-        if(win.equals("XOX") || win.equals("OXO")){
-            return true;
+        if(win.equals("XOX")){
+            return 2;
+        }
+        if(win.equals("OXO")){
+            return -2;
         }
 
         /**
@@ -92,8 +97,11 @@ public class Grid {
             }
             win += grid[this.col + i][this.row - i];
         }
-        if(win.equals("XOX") || win.equals("OXO")){
-            return true;
+        if(win.equals("XOX")){
+            return 2;
+        }
+        if(win.equals("OXO")){
+            return -2;
         }
 
         /**
@@ -106,8 +114,11 @@ public class Grid {
             }
             win += grid[this.col + i][this.row + i];
         }
-        if(win.equals("XOX") || win.equals("OXO")){
-            return true;
+        if(win.equals("XOX")){
+            return 2;
+        }
+        if(win.equals("OXO")){
+            return -2;
         }
 
         /**
@@ -120,8 +131,11 @@ public class Grid {
             }
             win += grid[this.col - i][this.row - i];
         }
-        if(win.equals("XOX") || win.equals("OXO")){
-            return true;
+        if(win.equals("XOX")){
+            return 2;
+        }
+        if(win.equals("OXO")){
+            return -2;
         }
 
         /**
@@ -134,11 +148,14 @@ public class Grid {
             }
             win += grid[this.col - i][this.row + i];
         }
-        if(win.equals("XOX") || win.equals("OXO")){
-            return true;
+        if(win.equals("XOX")){
+            return 2;
+        }
+        if(win.equals("OXO")){
+            return -2;
         }
 
-        return false;
+        return 0;
     }
 
     public boolean isFull(){
@@ -159,5 +176,9 @@ public class Grid {
             }
             System.out.println();
         }
+    }
+
+    public int minimax(char[][] grid, int depth, boolean isMax){
+        int score = evaluate(grid); 
     }
 }
