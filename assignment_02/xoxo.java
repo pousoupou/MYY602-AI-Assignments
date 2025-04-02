@@ -12,6 +12,26 @@ public class xoxo {
 
         while(!gl.isGameEnded()){
             gl.printGrid();
+
+            gl.findBestMove();
+            
+            if(gl.evaluate(gl.getGrid()) == -2){
+                System.out.println("User Wins!");
+                gl.printGrid();
+                return;
+            }
+            else if(gl.evaluate(gl.getGrid()) == 2){
+                System.out.println("Computer Wins!");
+                gl.printGrid();
+                return;
+            }
+            else if(gl.evaluate(gl.getGrid()) == 0){
+                System.out.println("Draw!");
+                gl.printGrid();
+                return;
+            }
+            
+            gl.printGrid();
             
             System.out.println("Choose your cell (row -> enter -> column -> enter):\n");
             row = sc.nextInt();
@@ -41,27 +61,7 @@ public class xoxo {
                 System.out.println("Draw!");
                 gl.printGrid();
                 return;
-            }
-            
-            gl.printGrid();
-            
-            gl.findBestMove();
-            
-            if(gl.evaluate(gl.getGrid()) == -2){
-                System.out.println("User Wins!");
-                gl.printGrid();
-                return;
-            }
-            else if(gl.evaluate(gl.getGrid()) == 2){
-                System.out.println("Computer Wins!");
-                gl.printGrid();
-                return;
-            }
-            else if(gl.evaluate(gl.getGrid()) == 0){
-                System.out.println("Draw!");
-                gl.printGrid();
-                return;
-            }
+            }           
         }
 
         gl.printGrid();

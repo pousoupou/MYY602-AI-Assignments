@@ -3,14 +3,14 @@ package assignment_02;
 import java.util.Random;
 
 public class GameLogic {
-    private char[][] grid;
+    private static char[][] grid = new char[3][4];
     private int row;
     private int col;
     private boolean maxFirst;
     private boolean gameEnded;
+    private static int[] score = new int[4];
 
     public GameLogic(){
-        grid = new char[3][4];
         for(int i = 0; i < 3; i++){
             for(int j = 0; j < 4; j++){
                 grid[i][j] = ' ';
@@ -45,6 +45,8 @@ public class GameLogic {
         }
 
         gameEnded = false;
+
+        
     }
 
     public char[][] getGrid(){
@@ -108,10 +110,10 @@ public class GameLogic {
                     continue;
                 }
                 win += grid[i][j];
-                if(win.equals("XOX")){
+                if(win.contains("XOX")){
                     return 2;
                 }
-                if(win.equals("OXO")){
+                if(win.contains("OXO")){
                     return -2;
                 }
             }
@@ -129,10 +131,10 @@ public class GameLogic {
                     continue;
                 }
                 win += grid[i][j];
-                if(win.equals("XOX")){
+                if(win.contains("XOX")){
                     return 2;
                 }
-                if(win.equals("OXO")){
+                if(win.contains("OXO")){
                     return -2;
                 }
             }
@@ -150,10 +152,10 @@ public class GameLogic {
                     continue;
                 }
                 win += grid[j][j+i];
-                if(win.equals("XOX")){
+                if(win.contains("XOX")){
                     return 2;
                 }
-                if(win.equals("OXO")){
+                if(win.contains("OXO")){
                     return -2;
                 }
             }
@@ -172,10 +174,10 @@ public class GameLogic {
                     continue;
                 }
                 win += grid[j][2-j+i];
-                if(win.equals("XOX")){
+                if(win.contains("XOX")){
                     return 2;
                 }
-                if(win.equals("OXO")){
+                if(win.contains("OXO")){
                     return -2;
                 }
             }
@@ -190,40 +192,44 @@ public class GameLogic {
         return -1;
     }
     
-    public int minimax(char[][] grid, boolean isMax){
-        int score = evaluate(grid);
+    public int[] minimax(char[][] grid, boolean isMax, int steps){
+        score[0] = evaluate(grid);
+        score[1] = steps;
+        
+        if(score[0] != -1){
 
-        if(score == 2){
             return score;
         }
         
         if(isMax){
-            int bestScore = Integer.MIN_VALUE;
+            score[0] = Integer.MIN_VALUE;
             for(int i = 0; i < 3; i++){
                 for(int j = 0; j < 4; j++){
                     if(grid[i][j] == ' '){
                         grid[i][j] = 'X';
-                        bestScore = Math.max(bestScore, minimax(grid, !isMax));
+                        int[] temp = minimax(grid, !isMax, steps++);
+                        score[0] = Math.max(score[0],temp[0]);
                         grid[i][j] = ' ';
                     }
                 }
             }
             
-            return bestScore;
+            return score;
         }
         else{
-            int bestScore = Integer.MAX_VALUE;
+            score[0] = Integer.MAX_VALUE;
             for(int i = 0; i < 3; i++){
                 for(int j = 0; j < 4; j++){
                     if(grid[i][j] == ' '){
                         grid[i][j] = 'O';
-                        bestScore = Math.min(bestScore, minimax(grid, !isMax));
+                        int[] temp = minimax(grid, !isMax, steps++);
+                        score[0] = Math.min(score[0], temp[0]);
                         grid[i][j] = ' ';
                     }
                 }
             }
         
-            return bestScore;
+            return score;
         }
     }
 
@@ -231,16 +237,19 @@ public class GameLogic {
         int bestValue = Integer.MIN_VALUE;
         int bestRow = -1;
         int bestCol = -1;
-        
+        int bestSteps = Integer.MAX_VALUE;
+        int[] bestMove = new int[2];
+
         for(int i = 0; i < 3; i++){
             for(int j = 0; j < 4; j++){
                 if(grid[i][j] == ' '){
                     grid[i][j] = 'X';
-                    int moveValue = minimax(grid, false);
+                    bestMove = minimax(grid, false, 1);
                     grid[i][j] = ' ';
                     
-                    if(moveValue > bestValue){
-                        bestValue = moveValue;
+                    if((bestMove[0] >= bestValue && bestMove[1] <= bestSteps) || (bestMove[0] > bestValue)){
+                        bestValue = bestMove[0];
+                        bestSteps = bestMove[1];
                         bestRow = i;
                         bestCol = j;
                     }
@@ -248,7 +257,7 @@ public class GameLogic {
             }
         }
 
-        System.out.println("Best move: (" + bestRow + ", " + bestCol + ")");
+        System.out.println("Best move: (" + bestRow + ", " + bestCol);
         grid[bestRow][bestCol] = 'X';
     }
 }
