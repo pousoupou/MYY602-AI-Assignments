@@ -147,7 +147,6 @@ public class GameLogic {
         }
         win = "";
 
-
         /*
          * Check diagonally (/)
          */
