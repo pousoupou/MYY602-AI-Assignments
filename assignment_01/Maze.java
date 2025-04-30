@@ -9,7 +9,8 @@ public class Maze {
     private char[][] maze;
     private char robot = 'R';
     private int[] robotPosition = new int[2];
-    private int cost;
+    private int[] goalPosition = new int[2];
+    private boolean teleported = false;
 
     public Maze(int N, double p) {
         if(p < 0 || p > 1) {
@@ -21,11 +22,11 @@ public class Maze {
         this.initMaze();
     }
 
-    public Maze(char[][] maze, int[] robotPosition, int cost){
+    public Maze(char[][] maze, int[] robotPosition, boolean teleported) {
         this.N = maze.length;
         this.maze = maze;
         this.robotPosition = robotPosition;
-        this.cost = cost;
+        this.teleported = teleported;
     }
 
     private void initMaze(){
@@ -59,14 +60,14 @@ public class Maze {
         scanner.close();
     }
 
-    public void printMaze() {
+    public void printMaze(){
         System.out.println();
-        for(int i = 0; i < N - 1; i++) {
+        for(int i = 0; i < N - 1; i++){
             System.out.print("+---");
         }
         System.out.print("+---+\n");
 
-        for (int i = 0; i < N - 1; i++) {
+        for(int i = 0; i < N - 1; i++){
             for (int j = 0; j < N - 1; j++) {
                 System.out.print("| " + maze[i][j] + " ");
             }
@@ -83,37 +84,74 @@ public class Maze {
         }
         System.out.print("|\n");
 
-        for(int i = 0; i < N - 1; i++) {
+        for(int i = 0; i < N - 1; i++){
             System.out.print("+---");
         }
         System.out.print("+---+\n");
     }
 
     public void setStart(int x, int y) {
-        if (x < 0 || x >= N || y < 0 || y >= N) {
+        if(x < 0 || x >= N || y < 0 || y >= N){
             throw new IllegalArgumentException("Start position out of bounds");
         }
         maze[x][y] = 'S';
     }
 
     public void setGoal(int x, int y) {
-        if (x < 0 || x >= N || y < 0 || y >= N) {
+        if(x < 0 || x >= N || y < 0 || y >= N){
             throw new IllegalArgumentException("Goal position out of bounds");
         }
         maze[x][y] = 'G';
+        goalPosition[0] = x;
+        goalPosition[1] = y;
     }
 
-    public void moveRobot(int newX, int newY) {
-        if (newX < 0 || newX >= N || newY < 0 || newY >= N) {
-            throw new IllegalArgumentException("Move out of bounds");
+    public int[] getGoalPosition() {
+        return goalPosition;
+    }
+
+    public ArrayList<Maze> getPossibleMoves() {
+        ArrayList<Maze> moves = new ArrayList<>();
+        int x = robotPosition[0];
+        int y = robotPosition[1];
+
+        int[][] directions = {
+            {x-1, y}, {x+1, y}, {x, y-1}, {x, y+1}, // Up, Down, Left, Right
+            {x-1, y-1}, {x-1, y+1}, {x+1, y-1}, {x+1, y+1} // Diagonal
+        };
+
+        for(int[] direction : directions){
+            int newX = direction[0];
+            int newY = direction[1];
+            if(newX >= 0 && newX < N && newY >= 0 && newY < N){
+                if (maze[newX][newY] == ' ') {
+                    Maze newMaze = new Maze(maze, int[]{newX, newY}, false);
+                    newMaze.getMaze()[newX][newY] = robot;
+                    newMaze.getMaze()[robotPosition[0]][robotPosition[1]] = ' ';
+                    moves.add(newMaze);
+                }
+            }
         }
-        if (maze[newX][newY] == 'X') {
-            throw new IllegalArgumentException("Move blocked by wall");
+
+        // Special cases for teleportation
+        if(robotPosition[0] == N-1 && robotPosition[1] == N-1){
+            Maze newMaze = new Maze(maze, new int[]{0, 0}, true);
+            newMaze.getMaze()[0][0] = robot;
+            newMaze.getMaze()[robotPosition[0]][robotPosition[1]] = ' ';
+            moves.add(newMaze);
         }
-        maze[robotPosition[0]][robotPosition[1]] = ' ';
-        robotPosition[0] = newX;
-        robotPosition[1] = newY;
-        maze[newX][newY] = robot;
+        if(robotPosition[0] == 0 && robotPosition[1] == 0){
+            Maze newMaze = new Maze(maze, new int[]{N-1, N-1}, true);
+            newMaze.getMaze()[N-1][N-1] = robot;
+            newMaze.getMaze()[robotPosition[0]][robotPosition[1]] = ' ';
+            moves.add(newMaze);
+        }
+
+        return moves;
+    }
+
+    public boolean isTeleported() {
+        return teleported;
     }
 
     public int[] getRobotPosition() {
@@ -130,14 +168,6 @@ public class Maze {
 
     public char getRobot() {
         return robot;
-    }
-
-    public int getCost() {
-        return cost;
-    }
-
-    public void setCost(int cost) {
-        this.cost = cost;
     }
 
     public static void main(String[] args) {
