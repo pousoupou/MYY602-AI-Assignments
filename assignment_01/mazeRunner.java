@@ -1,5 +1,3 @@
-package assignment_01;
-
 import java.util.*;
 
 public class mazeRunner {

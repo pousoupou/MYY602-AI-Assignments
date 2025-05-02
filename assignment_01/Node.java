@@ -1,5 +1,3 @@
-package assignment_01;
-
 import java.util.ArrayList;
 
 public class Node {
@@ -86,21 +84,19 @@ public class Node {
         int yStdDistance = Math.abs(robotPosition[1] - goalPosition[1]);
         int stdDist = Math.max(xStdDistance, yStdDistance); // Chebyshev distance
 
-        // Left teleportation distance
-        int xLeftTeleportation = Math.abs(goalPosition[0] - N-1) + robotPosition[0] + 2;
-        int yLeftTeleportation = Math.abs(goalPosition[1] - N-1) + robotPosition[1] + 2;
-        int LeftTeleportation = Math.max(xLeftTeleportation, yLeftTeleportation);
+        // Robot to Goal through Top-Left Teleportation distance
+        int LeftTeleportDist = Math.max(robotPosition[0], robotPosition[1]);
+        LeftTeleportDist += 2;
+        LeftTeleportDist += Math.max(Math.abs(goalPosition[0] - (N-1)), Math.abs(goalPosition[1] - (N-1)));
 
-        // Right teleportation distance
-        int xRightTeleportation = Math.abs(robotPosition[0] - N-1) + goalPosition[0] + 2;
-        int yRightTeleportation = Math.abs(robotPosition[1] - N-1) + goalPosition[1] + 2;
-        int RightTeleportation = Math.max(xRightTeleportation, yRightTeleportation);
+        // Robot to Goal through Bottom-Right Teleportation distance
+        int RightTeleportDist = Math.max(Math.abs(robotPosition[0] - (N-1)), Math.abs(robotPosition[1] - (N-1)));
+        RightTeleportDist += 2;
+        RightTeleportDist += Math.max(goalPosition[0], goalPosition[1]);
 
-        int h = Math.min(stdDist, Math.min(LeftTeleportation, RightTeleportation));
-        
-        this.setHeuristicValue(h);
+        this.heuristicValue = Math.min(stdDist, Math.min(LeftTeleportDist, RightTeleportDist));
 
-        return h;
+        return heuristicValue;
     }
 
     @Override
