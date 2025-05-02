@@ -4,34 +4,30 @@ import java.util.ArrayList;
 
 public class Node {
     private Node parent;
-    private ArrayList<Maze> mazes;
+    private Maze state;
     private int heuristicValue;
     private int cost;
 
-    public Node(ArrayList<Maze> state){
+    public Node(Maze state){
         this.parent = null;
-        this.mazes = new ArrayList<>();
+        this.state = state;
         this.heuristicValue = 0;
         this.cost = 0;
-
-        for (Maze maze : state) {
-            this.mazes.add(maze);
-        }
     }
 
-    public Node(ArrayList<Maze> state, Node parent){
+    public Node(Maze state, Node parent){
         this.parent = parent;
-        this.mazes = new ArrayList<>();
+        this.state = state;
         this.heuristicValue = 0;
         this.cost = parent.getCost();
+    }
 
-        for (Maze maze : state) {
-            this.mazes.add(maze);
-        }
+    public Maze getState(){
+        return this.state;
     }
 
     public int getCost() {
-        return cost;
+        return this.cost;
     }
 
     public void setCost(int cost) {
@@ -39,27 +35,23 @@ public class Node {
     }
 
     public int getHeuristicValue() {
-        return heuristicValue;
+        return this.heuristicValue;
     }
 
     public void setHeuristicValue(int heuristicValue) {
         this.heuristicValue = heuristicValue;
     }
 
-    public double getE(){
-        return heuristicValue + cost;
+    public int getE(){
+        return this.heuristicValue + this.cost;
     }
 
     public Node getParent() {
-        return parent;
+        return this.parent;
     }
 
     public void setParent(Node parent) {
         this.parent = parent;
-    }
-
-    public ArrayList<Maze> getMazes() {
-        return mazes;
     }
 
     public ArrayList<Node> expandNode(){
@@ -67,33 +59,69 @@ public class Node {
         ArrayList<Maze> moves = new ArrayList<>();
         Node childNode;
 
-        for(Maze maze : mazes){
-            moves = maze.getRobotMoveList(maze);
-            for(Maze move : moves){
-                childNode = new Node(moves, this);
-                
-                if(move.isTeleported()){
-                    childNode.setCost(2);
-                }
-                else{
-                    childNode.setCost(1);
-                }
-
-                result.add(childNode);
+        moves = this.state.getPossibleMoves();
+        for(Maze move : moves){
+            childNode = new Node(move, this);
+            
+            if(move.isTeleported()){
+                childNode.setCost(this.getCost() + 2);
             }
+            else{
+                childNode.setCost(this.getCost() + 1);
+            }
+
+            result.add(childNode);
         }
+
+        return result;
     }
 
-    public int heuristic(Maze maze){
-        int[] robotPosition = maze.getRobotPosition();
-        int[] goalPosition = maze.getGoalPosition();
+    public int heuristic(){
+        int[] robotPosition = this.state.getRobotPosition();
+        int[] goalPosition = this.state.getGoalPosition();
+        int N = this.state.getMaze().length;
 
-        int xDistance = Math.abs(robotPosition[0] - goalPosition[0]);
-        int yDistance = Math.abs(robotPosition[1] - goalPosition[1]);
-        int h = xDistance + yDistance;
+        // Robot to Goal distance
+        int xStdDistance = Math.abs(robotPosition[0] - goalPosition[0]);
+        int yStdDistance = Math.abs(robotPosition[1] - goalPosition[1]);
+        int stdDist = Math.max(xStdDistance, yStdDistance); // Chebyshev distance
+
+        // Left teleportation distance
+        int xLeftTeleportation = Math.abs(goalPosition[0] - N-1) + robotPosition[0] + 2;
+        int yLeftTeleportation = Math.abs(goalPosition[1] - N-1) + robotPosition[1] + 2;
+        int LeftTeleportation = Math.max(xLeftTeleportation, yLeftTeleportation);
+
+        // Right teleportation distance
+        int xRightTeleportation = Math.abs(robotPosition[0] - N-1) + goalPosition[0] + 2;
+        int yRightTeleportation = Math.abs(robotPosition[1] - N-1) + goalPosition[1] + 2;
+        int RightTeleportation = Math.max(xRightTeleportation, yRightTeleportation);
+
+        int h = Math.min(stdDist, Math.min(LeftTeleportation, RightTeleportation));
         
         this.setHeuristicValue(h);
 
         return h;
+    }
+
+    @Override
+    public boolean equals(Object obj){
+        if(this == obj){
+            return true;
+        }
+        if(obj == null || getClass() != obj.getClass()){
+            return false;
+        }
+        
+        Node otherNode = (Node) obj;
+        int[] thisPos = this.state.getRobotPosition();
+        int[] otherPos = otherNode.state.getRobotPosition();
+        
+        return thisPos[0] == otherPos[0] && thisPos[1] == otherPos[1] && this.state.isTeleported() == otherNode.state.isTeleported();
+    }
+
+    @Override
+    public int hashCode(){
+        int[] pos = this.state.getRobotPosition();
+        return 31 * (31 * pos[0] + pos[1]) + (state.isTeleported() ? 1 : 0);
     }
 }
