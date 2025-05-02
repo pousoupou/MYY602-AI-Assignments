@@ -1,6 +1,7 @@
 package assignment_01;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class Maze {
@@ -9,7 +10,7 @@ public class Maze {
     private char[][] maze;
     private char robot = 'R';
     private int[] robotPosition = new int[2];
-    private int[] goalPosition = new int[2];
+    private static int[] goalPosition = new int[2];
     private boolean teleported = false;
 
     public Maze(int N, double p) {
@@ -24,8 +25,17 @@ public class Maze {
 
     public Maze(char[][] maze, int[] robotPosition, boolean teleported) {
         this.N = maze.length;
-        this.maze = maze;
-        this.robotPosition = robotPosition;
+        this.maze = new char[N][N];
+        for(int i = 0; i < maze.length; i++){
+            for(int j = 0; j < maze[i].length; j++){
+                this.maze[i][j] = maze[i][j];
+            }
+        }
+        
+        for(int i = 0; i < robotPosition.length; i++){
+            this.robotPosition[i] = robotPosition[i];
+        }
+
         this.teleported = teleported;
     }
 
@@ -36,7 +46,7 @@ public class Maze {
                     maze[i][j] = ' ';
                     continue;
                 }
-                if(Math.random() < (1 - p)){
+                if(Math.random() < p){
                     maze[i][j] = 'X';
                 } else {
                     maze[i][j] = ' ';
@@ -57,7 +67,7 @@ public class Maze {
         int goalX = scanner.nextInt();
         int goalY = scanner.nextInt();
         this.setGoal(goalX, goalY);
-        scanner.close();
+        // scanner.close();
     }
 
     public void printMaze(){
@@ -112,8 +122,8 @@ public class Maze {
 
     public ArrayList<Maze> getPossibleMoves() {
         ArrayList<Maze> moves = new ArrayList<>();
-        int x = robotPosition[0];
-        int y = robotPosition[1];
+        int x = this.robotPosition[0];
+        int y = this.robotPosition[1];
 
         int[][] directions = {
             {x-1, y}, {x+1, y}, {x, y-1}, {x, y+1}, // Up, Down, Left, Right
@@ -123,28 +133,36 @@ public class Maze {
         for(int[] direction : directions){
             int newX = direction[0];
             int newY = direction[1];
+
             if(newX >= 0 && newX < N && newY >= 0 && newY < N){
-                if (maze[newX][newY] == ' ') {
-                    Maze newMaze = new Maze(maze, int[]{newX, newY}, false);
+                if (this.maze[newX][newY] == ' ' || this.maze[newX][newY] == 'G') {
+                    Maze newMaze = new Maze(this.maze, new int[]{newX, newY}, false);
                     newMaze.getMaze()[newX][newY] = robot;
-                    newMaze.getMaze()[robotPosition[0]][robotPosition[1]] = ' ';
+                    newMaze.getMaze()[x][y] = ' ';
                     moves.add(newMaze);
+                    continue;
                 }
             }
-        }
 
-        // Special cases for teleportation
-        if(robotPosition[0] == N-1 && robotPosition[1] == N-1){
-            Maze newMaze = new Maze(maze, new int[]{0, 0}, true);
-            newMaze.getMaze()[0][0] = robot;
-            newMaze.getMaze()[robotPosition[0]][robotPosition[1]] = ' ';
-            moves.add(newMaze);
-        }
-        if(robotPosition[0] == 0 && robotPosition[1] == 0){
-            Maze newMaze = new Maze(maze, new int[]{N-1, N-1}, true);
-            newMaze.getMaze()[N-1][N-1] = robot;
-            newMaze.getMaze()[robotPosition[0]][robotPosition[1]] = ' ';
-            moves.add(newMaze);
+            // Special cases for teleportation
+            if(x == N-1 && newX == N-1 && newY == N){
+                if(this.maze[0][0] == ' ' || this.maze[0][0] == 'G'){
+                    Maze newMaze = new Maze(this.maze, new int[]{0, 0}, true);
+                    newMaze.getMaze()[0][0] = robot;
+                    newMaze.getMaze()[x][y] = ' ';
+                    moves.add(newMaze);
+                    continue;
+                }
+            }
+            if(x == 0 && newX == 0 && newY == -1){
+                if(this.maze[N-1][N-1] == ' ' || this.maze[N-1][N-1] == 'G'){
+                    Maze newMaze = new Maze(this.maze, new int[]{N-1, N-1}, true);
+                    newMaze.getMaze()[N-1][N-1] = robot;
+                    newMaze.getMaze()[x][y] = ' ';
+                    moves.add(newMaze);
+                    continue;
+                }
+            }
         }
 
         return moves;
@@ -155,11 +173,11 @@ public class Maze {
     }
 
     public int[] getRobotPosition() {
-        return robotPosition;
+        return this.robotPosition;
     }
     
     public char[][] getMaze() {
-        return maze;
+        return this.maze;
     }
 
     public int getN() {
@@ -170,13 +188,7 @@ public class Maze {
         return robot;
     }
 
-    public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter the size of the maze (N): ");
-        int N = scanner.nextInt();
-        System.out.print("Enter the probability of a cell being empty (p): ");
-        double p = scanner.nextDouble();
-        Maze maze = new Maze(N, p);
-        maze.printMaze();
+    public boolean isGoal() {
+        return this.robotPosition[0] == goalPosition[0] && this.robotPosition[1] == goalPosition[1];
     }
 }
