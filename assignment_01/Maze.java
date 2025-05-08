@@ -4,7 +4,7 @@ import java.util.Scanner;
 
 public class Maze {
     private int N;          // Size of the maze (N x N)
-    private double p;       // Probability of a cell being empty
+    private double p;       // Probability of a cell being a Wall
     private char[][] maze;
     private char robot = 'R';
     private int[] robotPosition = new int[2];
