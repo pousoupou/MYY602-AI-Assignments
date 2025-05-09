@@ -1,4 +1,7 @@
-package assignment_02;
+/*
+ * Papaspyros Stylianos 5162
+ * Bouzas Ioannis 5025
+ */
 
 import java.util.Scanner;
 

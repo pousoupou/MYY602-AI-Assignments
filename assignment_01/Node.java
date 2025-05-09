@@ -1,3 +1,8 @@
+/*
+ * Papaspyros Stylianos 5162
+ * Bouzas Ioannis 5025
+ */
+
 import java.util.ArrayList;
 
 public class Node {

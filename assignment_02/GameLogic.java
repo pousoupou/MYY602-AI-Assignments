@@ -1,4 +1,7 @@
-package assignment_02;
+/*
+ * Papaspyros Stylianos 5162
+ * Bouzas Ioannis 5025
+ */
 
 import java.util.Random;
 
@@ -175,11 +178,19 @@ public class GameLogic {
         return -1;
     }
     
-    public int minimax(char[][] grid, boolean isMax){
+    public int minimax(char[][] grid, boolean isMax, int depth){
         int score = evaluate(grid);
 
         if(score != -1){
-            return score;
+            if(score == 2){
+                return score - depth;
+            }
+            else if(score == -2){
+                return score + depth;
+            }
+            else{
+                return score;
+            }
         }
         
         if(isMax){
@@ -188,7 +199,7 @@ public class GameLogic {
                 for(int j = 0; j < 4; j++){
                     if(grid[i][j] == ' '){
                         grid[i][j] = 'X';
-                        best = Math.max(best, minimax(grid, !isMax));
+                        best = Math.max(best, minimax(grid, !isMax, depth+1));
                         grid[i][j] = ' ';
                     }
                 }
@@ -202,7 +213,7 @@ public class GameLogic {
                 for(int j = 0; j < 4; j++){
                     if(grid[i][j] == ' '){
                         grid[i][j] = 'O';
-                        best = Math.min(best, minimax(grid, !isMax));
+                        best = Math.min(best, minimax(grid, !isMax, depth+1));
                         grid[i][j] = ' ';
                     }
                 }
@@ -222,7 +233,7 @@ public class GameLogic {
             for(int j = 0; j < 4; j++){
                 if(grid[i][j] == ' '){
                     grid[i][j] = 'X';
-                    int moveValue = minimax(grid, false);
+                    int moveValue = minimax(grid, false, 0);
                     grid[i][j] = ' ';
 
                     if(moveValue > bestValue){
