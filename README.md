@@ -41,12 +41,12 @@ This project implements and compares the Uniform Cost Search (UCS) and A* search
 
 ## Assignment 2: Tic-Tac-Toe Variant with Minimax AI
 
-This project is a variant of Tic-Tac-Toe where a human player competes against a CPU that uses the Minimax algorithm to play optimally. The winning condition is forming the sequence "XOX" or "OXO".
+This project is a variant of Tic-Tac-Toe where a human player ("O") competes against the CPU ("X") that uses the Minimax algorithm to play optimally. The winning condition is forming the sequence "OXO" for the player and "XOX" for the CPU.
 
 ### Features
 
 *   **Game Logic**: A Tic-Tac-Toe game on a 3x3 board.
-*   **Unique Winning Condition**: A player wins by creating the sequence "XOX" or "OXO" in any horizontal, vertical, or diagonal line.
+*   **Unique Winning Condition**: A player wins by creating the sequence "OXO" in any horizontal, vertical, or diagonal line.
 *   **AI Opponent**: The CPU player uses the **Minimax algorithm** to analyze the game tree and select the move that maximizes its chances of winning.
 *   **Interactive Gameplay**: Allows a human to play against the intelligent CPU agent.
 
