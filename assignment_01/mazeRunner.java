@@ -5,7 +5,7 @@
 
 import java.util.*;
 
-public class mazeRunner {
+public class MazeRunner {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Enter the maze size (N): ");

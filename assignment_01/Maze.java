@@ -4,7 +4,6 @@
  */
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Scanner;
 
 public class Maze {
@@ -70,7 +69,7 @@ public class Maze {
         int goalX = scanner.nextInt();
         int goalY = scanner.nextInt();
         this.setGoal(goalX, goalY);
-        // scanner.close();
+        scanner.close();
     }
 
     public void printMaze(){

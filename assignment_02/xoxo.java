@@ -68,5 +68,6 @@ public class xoxo {
         }
 
         gl.printGrid();
+        sc.close();
     }
 }
