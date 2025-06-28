@@ -3,8 +3,8 @@
 This repository contains the assignments for the course MYY602: Artificial Intelligence.
 
 **Authors:**
-*   Papaspyros Stylianos (5162)
-*   Bouzas Ioannis (5025)
+*   Papaspyros Stylianos
+*   Bouzas Ioannis
 
 ---
 
